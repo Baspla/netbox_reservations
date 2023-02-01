@@ -1,3 +1,3 @@
-## netbox-workspaces
+## netbox-reservations
 
-Manage workspaces in NetBox
+Manage reservations in NetBox

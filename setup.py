@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='netbox-workspaces',
+    name='netbox-reservations',
     version='0.1',
     description='',
     install_requires=[],

@@ -1,0 +1,77 @@
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+  <div class="row mb-3">
+    <div class="col col-md-6">
+      <div class="card">
+        <h5 class="card-header">Reservation</h5>
+        <div class="card-body">
+          <table class="table table-hover attr-table">
+            <tr>
+              <th scope="row">Name</th>
+              <td>{{ object.name }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Description</th>
+              <td>{{ object.description }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Contact</th>
+              <td>
+                {% if object.contact %}
+                  <a href="{{ object.contact.get_absolute_url }}">{{ object.contact }}</a>
+                {% else %}
+                  {{ ''|placeholder }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Tenant</th>
+              <td>
+                {% if object.tenant %}
+                  <a href="{{ object.tenant.get_absolute_url }}">{{ object.tenant }}</a>
+                {% else %}
+                  {{ ''|placeholder }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Starting Date</th>
+              <td>{{ object.start_date }}</td>
+            </tr>
+            <tr>
+              <th scope="row">End Date</th>
+              <td>{{ object.end_date }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Claims</th>
+              <td>{{ object.claims.count }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
+      {% include 'inc/panels/tags.html' %}
+      {% include 'inc/panels/comments.html' %}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col col-md-12">
+      <div class="card">
+        <h5 class="card-header">
+          Claims
+        </h5>
+        <div class="card-body table-responsive">
+          {% render_table claims_table %}
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'plugins:netbox_reservations:claim_add' %}?reservation={{ object.id }}" type="button" class="btn btn-sm btn-success">
+            <i class="mdi mdi-plus-thick"></i> Add Claim
+          </a>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

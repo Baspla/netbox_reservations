@@ -54,3 +54,25 @@ class ClaimFilterForm(NetBoxModelFilterSetForm):
         choices=RestrictionChoices,
         required=False
     )
+
+
+class ReservationFilterForm(NetBoxModelFilterSetForm):
+    model = Reservation
+    contact = DynamicModelChoiceField(
+        queryset=Contact.objects.all(),
+        required=False
+    )
+    tenant = DynamicModelChoiceField(
+        queryset=Tenant.objects.all(),
+        required=False
+    )
+    start_date = forms.DateField(
+        label='Start date after',
+        widget=DateInput,
+        required=False
+    )
+    end_date = forms.DateField(
+        label='End date before',
+        widget=DateInput,
+        required=False
+    )

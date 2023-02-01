@@ -26,6 +26,8 @@ class ReservationListView(generic.ObjectListView):
         claim_count=Count('claims')
     )
     table = tables.ReservationTable
+    filterset = filtersets.ReservationFilterSet
+    filterset_form = forms.ReservationFilterForm
 
     permission_required = "netbox_reservations.view_reservation"
 

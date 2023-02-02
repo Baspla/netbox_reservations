@@ -1,6 +1,7 @@
-from django.db.models import Count
+from django.db.models import Count, Subquery, OuterRef
 
 from netbox.views import generic
+from extras.models import Tag
 from . import filtersets, forms, models, tables
 
 
@@ -71,3 +72,18 @@ class ClaimDeleteView(generic.ObjectDeleteView):
     queryset = models.Claim.objects.all()
 
     permission_required = "netbox_reservations.delete_claim"
+
+#
+# Tag overview
+#
+
+class TagOverviewListView(generic.ObjectListView):
+    subqueryA = models.Claim.objects.filter(tag=OuterRef('id'))
+    subqueryB = models.Reservation.objects.filter(claims__in=subqueryA)
+    queryset = Tag.objects.annotate(
+        claim_count=Count('claims'),
+        reservations=Subquery(subqueryB.values('name')[:1]),
+    )
+    table = tables.TagOverviewTable
+
+    permission_required = "netbox_reservations.view_tag_overview"

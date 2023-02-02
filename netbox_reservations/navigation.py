@@ -35,4 +35,9 @@ menu_items = (
         buttons=claim_buttons,
         permissions=["netbox_reservations.view_claim"]
     ),
+    PluginMenuItem(
+        link='plugins:netbox_reservations:tag_overview_list',
+        link_text='Tag Overview',
+        permissions=["netbox_reservations.view_tag_overview"]
+    ),
 )

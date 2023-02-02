@@ -1,7 +1,8 @@
 import django_tables2 as tables
 
-from netbox.tables import NetBoxTable, ChoiceFieldColumn, ColoredLabelColumn
+from netbox.tables import NetBoxTable, ChoiceFieldColumn, ColoredLabelColumn, columns
 from .models import Reservation, Claim
+from extras.models import Tag
 
 
 class ReservationTable(NetBoxTable):
@@ -51,3 +52,19 @@ class ClaimTable(NetBoxTable):
         default_columns = (
             'id','reservation', 'tag', 'restriction',
         )
+
+
+class TagOverviewTable(NetBoxTable):
+    name = tables.Column(
+        linkify=True
+    )
+    color = columns.ColorColumn()
+    claim_count = tables.Column()
+    #lambda claim: claim.reservation.get_absolute_url()
+    reservations = tables.Column(
+        linkify=True
+    )
+    class Meta(NetBoxTable.Meta):
+        model = Tag
+        fields = ('pk', 'id','color', 'name', 'claim_count','reservations')
+        default_columns = ('name', 'claim_count','reservations')

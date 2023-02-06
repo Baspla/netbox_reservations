@@ -13,6 +13,7 @@ class ReservationView(generic.ObjectView):
     queryset = models.Reservation.objects.all()
 
     permission_required = "netbox_reservations.view_reservation"
+
     def get_extra_context(self, request, instance):
         table = tables.ReducedClaimTable(instance.claims.all())
         table.configure(request)
@@ -32,16 +33,19 @@ class ReservationListView(generic.ObjectListView):
 
     permission_required = "netbox_reservations.view_reservation"
 
+
 class ReservationEditView(generic.ObjectEditView):
     queryset = models.Reservation.objects.all()
     form = forms.ReservationForm
 
     permission_required = "netbox_reservations.edit_reservation"
 
+
 class ReservationDeleteView(generic.ObjectDeleteView):
     queryset = models.Reservation.objects.all()
 
     permission_required = "netbox_reservations.delete_reservation"
+
 
 #
 # Claim views
@@ -61,6 +65,7 @@ class ClaimListView(generic.ObjectListView):
 
     permission_required = "netbox_reservations.view_claim"
 
+
 class ClaimEditView(generic.ObjectEditView):
     queryset = models.Claim.objects.all()
     form = forms.ClaimForm
@@ -73,17 +78,15 @@ class ClaimDeleteView(generic.ObjectDeleteView):
 
     permission_required = "netbox_reservations.delete_claim"
 
+
 #
 # Tag overview
 #
 
 class TagOverviewListView(generic.ObjectListView):
-    subqueryA = models.Claim.objects.filter(tag=OuterRef('id'))
-    subqueryB = models.Reservation.objects.filter(claims__in=subqueryA)
-    queryset = Tag.objects.annotate(
-        claim_count=Count('claims'),
-        reservations=Subquery(subqueryB.values('name')[:1]),
-    )
+    queryset = Tag.objects.filter().annotate(
+        claim_count=Count('claims')
+    ).filter(claim_count=0)
     table = tables.TagOverviewTable
 
     permission_required = "netbox_reservations.view_tag_overview"

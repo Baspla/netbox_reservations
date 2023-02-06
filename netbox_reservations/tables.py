@@ -19,8 +19,8 @@ class ReservationTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = Reservation
-        fields = ('pk', 'id', 'name', 'claim_count', 'contact', 'tenant','start_date','end_date', 'comments')
-        default_columns = ('name', 'contact', 'tenant', 'claim_count','start_date','end_date')
+        fields = ('pk', 'id', 'name', 'claim_count', 'contact', 'tenant','is_draft','start_date','end_date', 'comments')
+        default_columns = ('name', 'contact', 'tenant', 'claim_count','start_date','end_date','is_draft')
 
 
 class ReducedClaimTable(NetBoxTable):
@@ -60,11 +60,7 @@ class TagOverviewTable(NetBoxTable):
     )
     color = columns.ColorColumn()
     claim_count = tables.Column()
-    #lambda claim: claim.reservation.get_absolute_url()
-    reservations = tables.Column(
-        linkify=True
-    )
     class Meta(NetBoxTable.Meta):
         model = Tag
-        fields = ('pk', 'id','color', 'name', 'claim_count','reservations')
-        default_columns = ('name', 'claim_count','reservations')
+        fields = ('pk', 'id', 'color', 'name', 'claim_count',)
+        default_columns = ('name', 'claim_count',)

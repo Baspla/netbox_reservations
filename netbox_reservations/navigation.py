@@ -1,4 +1,6 @@
-from extras.plugins import PluginMenuButton, PluginMenuItem
+from django.conf import settings
+
+from extras.plugins import PluginMenuButton, PluginMenuItem, PluginMenu
 from utilities.choices import ButtonColorChoices
 
 
@@ -22,7 +24,7 @@ claim_buttons = [
     )
 ]
 
-menu_items = (
+_menu_items = (
     PluginMenuItem(
         link='plugins:netbox_reservations:reservation_list',
         link_text='Reservations',
@@ -35,9 +37,23 @@ menu_items = (
         buttons=claim_buttons,
         permissions=["netbox_reservations.view_claim"]
     ),
+)
+
+_overview_menu_items = (
     PluginMenuItem(
         link='plugins:netbox_reservations:tag_overview_list',
-        link_text='Tag Overview',
+        link_text='Unclaimed Tags',
         permissions=["netbox_reservations.view_tag_overview"]
     ),
 )
+
+plugin_settings = settings.PLUGINS_CONFIG.get('netbox_reservations', {})
+
+if plugin_settings.get('top_level_menu'):
+    menu = PluginMenu(
+        label="Reservations",
+        groups=(("Reservations", _menu_items), ("Overviews", _overview_menu_items)),
+        icon_class="mdi mdi-calendar",
+    )
+else:
+    menu_items = _menu_items

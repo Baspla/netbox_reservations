@@ -5,11 +5,12 @@ from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
 from utilities.forms.fields import CommentField, DynamicModelChoiceField
 from .models import Reservation, Claim, RestrictionChoices
 
+
 class DateInput(forms.DateInput):
     input_type = 'date'
 
+
 class ReservationForm(NetBoxModelForm):
-    comments = CommentField()
     contact = DynamicModelChoiceField(
         queryset=Contact.objects.all(),
         required=True,
@@ -20,9 +21,16 @@ class ReservationForm(NetBoxModelForm):
     )
     start_date = forms.DateField(widget=DateInput)
     end_date = forms.DateField(widget=DateInput)
+    is_draft = forms.BooleanField(
+        required=False,
+        help_text='If checked, this reservation will be marked as a draft instead of planned/active/overdue.',
+        initial=True
+    )
+    comments = CommentField()
+
     class Meta:
         model = Reservation
-        fields = ('name', 'comments', 'contact', 'tenant','start_date','end_date', 'tags')
+        fields = ('name', 'comments', 'contact', 'tenant', 'start_date', 'end_date', 'is_draft', 'tags')
 
 
 class ClaimForm(NetBoxModelForm):

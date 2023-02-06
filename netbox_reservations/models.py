@@ -1,7 +1,9 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 
 from netbox.models import NetBoxModel
+from netbox_reservations.validators import ClaimValidator, ReservationValidator
 from utilities.choices import ChoiceSet
 
 
@@ -35,11 +37,20 @@ class Reservation(NetBoxModel):
     )
     end_date = models.DateField(
     )
+    is_draft = models.BooleanField()
 
     prerequisite_models = (
         'tenancy.Contact',
         'tenancy.Tenant',
     )
+
+    def clean(self):
+        ReservationValidator().validate(self)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
     class Meta:
         ordering = ('name',)
 
@@ -59,7 +70,7 @@ class Claim(NetBoxModel):
     tag = models.ForeignKey(
         to='extras.Tag',
         on_delete=models.PROTECT,
-        related_name='claims',
+        related_name='claims'
     )
     restriction = models.CharField(
         max_length=20,
@@ -74,6 +85,13 @@ class Claim(NetBoxModel):
         'netbox_reservations.Reservation',
         'extras.Tag'
     )
+
+    def clean(self):
+        ClaimValidator().validate(self)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     class Meta:
         ordering = ('reservation', 'tag')

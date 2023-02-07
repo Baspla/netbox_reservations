@@ -39,6 +39,10 @@ class ClaimValidator(CustomValidator):
 class ReservationValidator(CustomValidator):
 
     def validate(self, instance):
+        if instance.start_date > instance.end_date:
+            self.fail(
+                "Start date must be before end date",
+                field='start_date')
         if instance.is_draft:
             return
         for claim in instance.claims.all():

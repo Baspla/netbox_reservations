@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 from netbox.models import NetBoxModel
 from netbox_reservations.validators import ClaimValidator, ReservationValidator
@@ -33,9 +34,9 @@ class Reservation(NetBoxModel):
         on_delete=models.PROTECT,
         related_name='reservations',
     )
-    start_date = models.DateField(
+    start_date = models.DateTimeField(
     )
-    end_date = models.DateField(
+    end_date = models.DateTimeField(
     )
     is_draft = models.BooleanField()
 
@@ -43,6 +44,16 @@ class Reservation(NetBoxModel):
         'tenancy.Contact',
         'tenancy.Tenant',
     )
+
+    def status(self):
+        if self.is_draft:
+            return 'Draft'
+        elif self.start_date > timezone.now():
+            return 'Planned'
+        elif self.end_date < timezone.now():
+            return 'Overdue'
+        else:
+            return 'Active'
 
     def clean(self):
         ReservationValidator().validate(self)
@@ -70,7 +81,7 @@ class Claim(NetBoxModel):
     tag = models.ForeignKey(
         to='extras.Tag',
         on_delete=models.PROTECT,
-        related_name='claims'
+        related_name='claims',
     )
     restriction = models.CharField(
         max_length=20,

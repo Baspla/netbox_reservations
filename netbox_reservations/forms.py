@@ -1,13 +1,15 @@
 from django import forms
+
 from tenancy.models import Contact, Tenant
 from extras.models import Tag
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
+from utilities.forms import DynamicModelMultipleChoiceField
 from utilities.forms.fields import CommentField, DynamicModelChoiceField
 from .models import Reservation, Claim, RestrictionChoices
 
 
-class DateInput(forms.DateInput):
-    input_type = 'date'
+class DateTimeInput(forms.DateTimeInput):
+    input_type = 'datetime-local'
 
 
 class ReservationForm(NetBoxModelForm):
@@ -19,8 +21,8 @@ class ReservationForm(NetBoxModelForm):
         queryset=Tenant.objects.all(),
         required=True,
     )
-    start_date = forms.DateField(widget=DateInput)
-    end_date = forms.DateField(widget=DateInput)
+    start_date = forms.DateTimeField(widget=DateTimeInput)
+    end_date = forms.DateTimeField(widget=DateTimeInput)
     is_draft = forms.BooleanField(
         required=False,
         help_text='If checked, this reservation will be marked as a draft instead of planned/active/overdue.',
@@ -50,11 +52,11 @@ class ClaimForm(NetBoxModelForm):
 
 class ClaimFilterForm(NetBoxModelFilterSetForm):
     model = Claim
-    reservation = forms.ModelMultipleChoiceField(
+    reservation = DynamicModelMultipleChoiceField(
         queryset=Reservation.objects.all(),
         required=False
     )
-    tag = DynamicModelChoiceField(
+    tag = DynamicModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         required=False
     )
@@ -74,13 +76,13 @@ class ReservationFilterForm(NetBoxModelFilterSetForm):
         queryset=Tenant.objects.all(),
         required=False
     )
-    start_date = forms.DateField(
+    start_date = forms.DateTimeField(
         label='Start date after',
-        widget=DateInput,
+        widget=DateTimeInput,
         required=False
     )
-    end_date = forms.DateField(
+    end_date = forms.DateTimeField(
         label='End date before',
-        widget=DateInput,
+        widget=DateTimeInput,
         required=False
     )

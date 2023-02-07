@@ -1,4 +1,6 @@
-from django.db.models import Count, Subquery, OuterRef
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Count, Subquery, OuterRef, Exists, Q
+from django.utils import timezone
 
 from netbox.views import generic
 from extras.models import Tag
@@ -83,10 +85,30 @@ class ClaimDeleteView(generic.ObjectDeleteView):
 # Tag overview
 #
 
+
 class TagOverviewListView(generic.ObjectListView):
-    queryset = Tag.objects.filter().annotate(
-        claim_count=Count('claims')
-    ).filter(claim_count=0)
+    queryset = Tag.objects \
+        .annotate(reservation_count=Count('claims', filter=Q(claims__reservation__start_date__lte=timezone.now(),
+                                                             claims__reservation__end_date__gte=timezone.now(),
+                                                             claims__reservation__is_draft=False)))
     table = tables.TagOverviewTable
 
     permission_required = "netbox_reservations.view_tag_overview"
+
+# reservation_list = ArrayAgg('claims__reservation__name', filter=Q(claims__reservation__start_date__lte=timezone.now(),
+#                                                                  claims__reservation__end_date__gte=timezone.now(),
+#                                                                  claims__reservation__is_draft=False)))
+
+# Tag.objects.exclude(~Exists(models.Reservation.objects.filter(
+#        claims__tag=OuterRef('pk'),
+#        start_date__lte=timezone.now(),
+#        end_date__gte=timezone.now()
+#    )))
+
+# class TagOverviewListView(generic.ObjectListView):
+#    queryset = Tag.objects.filter().annotate(
+#        claim_count=Count('claims')
+#    ).filter(claim_count=0)
+#    table = tables.TagOverviewTable
+#
+#    permission_required = "netbox_reservations.view_tag_overview"

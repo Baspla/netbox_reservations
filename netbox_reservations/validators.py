@@ -11,15 +11,15 @@ class ClaimValidator(CustomValidator):
     # bei restriction == 'SHARED':
     #   ein anderes Claim mit dem selben Tag als EXCLUSIVE existiert. Andere mit SHARED sind OK
     def validate(self, instance):
-        if instance.reservation.is_draft:
-            return
+        #if instance.reservation.is_draft:
+        #    return
         # Debugging Variablen
         # untersuchtes_objekt = instance.tag.claims
         # dir_von_objekt = dir(untersuchtes_objekt)
         # dict_von_objekt= untersuchtes_objekt.__dict__
         for claim in instance.tag.claims.all():
-            if claim.reservation.is_draft:
-                continue
+            #if claim.reservation.is_draft:
+            #    continue
             S1 = instance.reservation.start_date
             E1 = instance.reservation.end_date
             S2 = claim.reservation.start_date
@@ -43,12 +43,12 @@ class ReservationValidator(CustomValidator):
             self.fail(
                 "Start date must be before end date",
                 field='start_date')
-        if instance.is_draft:
-            return
+        # if instance.is_draft:
+        #    return
         for claim in instance.claims.all():
             try:
                 claim.full_clean()
             except ValidationError as e:
                 self.fail(
                     "A problem occured when trying to claim tag '" + claim.tag.name + "' with message: " + ''.join(
-                        e.message_dict['tag']), field='is_draft')
+                        e.message_dict['tag']))#, field='is_draft')

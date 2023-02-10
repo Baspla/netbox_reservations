@@ -45,14 +45,16 @@ class ClaimTable(NetBoxTable):
     )
     tag = ColoredLabelColumn()
     restriction = ChoiceFieldColumn()
+    start_date = tables.Column(accessor='reservation.start_date')
+    end_date = tables.Column(accessor='reservation.end_date')
 
     class Meta(NetBoxTable.Meta):
         model = Claim
         fields = (
-            'pk', 'id', 'reservation', 'tag', 'restriction', 'description',
+            'pk', 'id', 'reservation', 'tag', 'restriction', 'description','start_date', 'end_date',
         )
         default_columns = (
-            'id', 'reservation', 'tag', 'restriction',
+            'id', 'reservation', 'tag', 'restriction','start_date', 'end_date',
         )
 
 

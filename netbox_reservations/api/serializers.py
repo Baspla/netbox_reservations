@@ -41,8 +41,8 @@ class ReservationSerializer(NetBoxModelSerializer):
     claim_count = serializers.IntegerField(read_only=True)
     contact = NestedContactSerializer()
     tenant = NestedTenantSerializer()
-    start_date = serializers.DateField()
-    end_date = serializers.DateField()
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()
 
     class Meta:
         model = Reservation

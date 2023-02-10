@@ -26,4 +26,7 @@ urlpatterns = (
         'model': models.Claim
     }),
 
+    # Tag Overview
+    path('tags/', views.TagOverviewListView.as_view(), name='tag_overview_list'),
+
 )

@@ -17,6 +17,14 @@
               <td>{{ object.description }}</td>
             </tr>
             <tr>
+              <th scope="row">Status</th>
+              <td>{{ object.status }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Is Draft</th>
+              <td>{{ object.is_draft }}</td>
+            </tr>
+            <tr>
               <th scope="row">Contact</th>
               <td>
                 {% if object.contact %}
@@ -55,7 +63,7 @@
     </div>
     <div class="col col-md-6">
       {% include 'inc/panels/tags.html' %}
-      {% include 'inc/panels/comments.html' %}
+      <!--{% include 'inc/panels/comments.html' %}-->
     </div>
   </div>
   <div class="row">

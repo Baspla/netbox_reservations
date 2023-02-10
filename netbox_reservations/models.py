@@ -109,7 +109,7 @@ class Claim(NetBoxModel):
         unique_together = ('reservation', 'tag')
 
     def __str__(self):
-        return f'{self.reservation}: Claim {self.tag}'
+        return f'Claim for {self.tag} by {self.reservation}'
 
     def get_absolute_url(self):
         return reverse('plugins:netbox_reservations:claim', args=[self.pk])

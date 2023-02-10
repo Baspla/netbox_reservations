@@ -39,14 +39,15 @@ class ClaimForm(NetBoxModelForm):
     reservation = DynamicModelChoiceField(
         queryset=Reservation.objects.all()
     )
+
     tag = DynamicModelChoiceField(
-        queryset=Tag.objects.all()
+       queryset=Tag.objects.all()
     )
 
     class Meta:
         model = Claim
         fields = (
-            'reservation', 'tag', 'description', 'restriction', 'tags',
+            'reservation', 'tag', 'restriction', 'description',  'tags',
         )
 
 
@@ -56,6 +57,8 @@ class ClaimFilterForm(NetBoxModelFilterSetForm):
         queryset=Reservation.objects.all(),
         required=False
     )
+
+    # Tag filter is not working yet (picks id but filters for slug)
     tag = DynamicModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         required=False

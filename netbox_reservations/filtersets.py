@@ -1,9 +1,12 @@
+from extras.models import Tag
 from netbox.filtersets import NetBoxModelFilterSet
 from .models import Claim, Reservation
-from django_filters import DateFilter, DateTimeFilter
+from django_filters import DateTimeFilter, ModelMultipleChoiceFilter
 
 
 class ClaimFilterSet(NetBoxModelFilterSet):
+    tag = ModelMultipleChoiceFilter(queryset=Tag.objects.all())
+
     class Meta:
         model = Claim
         fields = ('id', 'reservation', 'tag', 'restriction')

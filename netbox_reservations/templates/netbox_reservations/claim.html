@@ -24,18 +24,21 @@
               </td>
             </tr>
             <tr>
-              <th scope="row">Description</th>
-              <td>{{ object.description|placeholder }}</td>
-            </tr>
-            <tr>
               <th scope="row">Restriction</th>
               <td>{{ object.get_restriction_display }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Description</th>
+              <td>{{ object.description|placeholder }}</td>
             </tr>
           </table>
         </div>
       </div>
       {% include 'inc/panels/custom_fields.html' %}
+    </div>
+    <div class="col col-md-6">
       {% include 'inc/panels/tags.html' %}
+      <!--{% include 'inc/panels/comments.html' %}-->
     </div>
   </div>
 {% endblock content %}

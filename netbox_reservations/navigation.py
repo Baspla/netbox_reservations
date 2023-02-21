@@ -43,7 +43,7 @@ _overview_menu_items = (
     PluginMenuItem(
         link='plugins:netbox_reservations:tag_overview_list',
         link_text='Unclaimed Tags',
-        permissions=["netbox_reservations.view_tag_overview"]
+        permissions=["netbox_reservations.view_claim"]
     ),
 )
 

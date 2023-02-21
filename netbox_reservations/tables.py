@@ -21,7 +21,8 @@ class ReservationTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = Reservation
         fields = (
-        'pk', 'id', 'name', 'claim_count', 'contact', 'tenant', 'is_draft', 'status', 'start_date', 'end_date', 'comments')
+            'pk', 'id', 'name', 'claim_count', 'contact', 'tenant', 'is_draft', 'status', 'start_date', 'end_date',
+            'comments')
         default_columns = ('name', 'contact', 'tenant', 'claim_count', 'start_date', 'end_date', 'is_draft', 'status')
 
 
@@ -51,10 +52,33 @@ class ClaimTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = Claim
         fields = (
-            'pk', 'id', 'reservation', 'tag', 'restriction', 'description','start_date', 'end_date',
+            'pk', 'id', 'reservation', 'tag', 'restriction', 'description', 'start_date', 'end_date',
         )
         default_columns = (
-            'id', 'reservation', 'tag', 'restriction','start_date', 'end_date',
+            'id', 'reservation', 'tag', 'restriction', 'start_date', 'end_date',
+        )
+
+
+class ExtendedClaimTable(NetBoxTable):
+    reservation = tables.Column(
+        linkify=True
+    )
+    restriction = ChoiceFieldColumn()
+    start_date = tables.Column(accessor='reservation.start_date')
+    end_date = tables.Column(accessor='reservation.end_date')
+    reservation__tenant = tables.Column(accessor='reservation.tenant', linkify=True)
+    reservation__contact = tables.Column(accessor='reservation.contact', linkify=True)
+    reservation__status = tables.Column(verbose_name='Status')
+
+    class Meta(NetBoxTable.Meta):
+        model = Claim
+        fields = (
+            'pk', 'id', 'reservation', 'reservation__tenant', 'reservation__contact', 'reservation__status', 'tag',
+            'restriction', 'description', 'start_date', 'end_date',
+        )
+        default_columns = (
+            'id', 'reservation', 'reservation__tenant', 'reservation__contact',
+            'restriction', 'reservation__status', 'start_date', 'end_date',
         )
 
 
@@ -69,5 +93,5 @@ class TagOverviewTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = Tag
-        fields = ('pk', 'id', 'color', 'name', 'slug', 'description','reservation_count')
-        default_columns = ('name','reservation_count')
+        fields = ('pk', 'id', 'color', 'name', 'slug', 'description', 'reservation_count')
+        default_columns = ('name', 'reservation_count')

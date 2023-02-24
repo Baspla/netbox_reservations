@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='netbox-reservations',
-    version='0.3',
+    version='0.4',
     description='',
     install_requires=[],
     packages=find_packages(),

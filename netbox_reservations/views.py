@@ -2,9 +2,13 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Count, Subquery, OuterRef, Exists, Q
 from django.utils import timezone
 
+from dcim.models import Device
 from netbox.views import generic
 from extras.models import Tag
 from . import filtersets, forms, models, tables
+from .models import Reservation
+from .tables import ReservationTable
+from .util.queries import getConflictingReservations
 
 
 #
@@ -20,8 +24,12 @@ class ReservationView(generic.ObjectView):
         table = tables.ReducedClaimTable(instance.claims.all())
         table.configure(request)
 
+        conflict_reservations = getConflictingReservations(instance)
+        conflict_table = ReservationTable(conflict_reservations)
+
         return {
             'claims_table': table,
+            'conflict_table': conflict_table,
         }
 
 
@@ -93,22 +101,8 @@ class TagOverviewListView(generic.ObjectListView):
                                                              claims__reservation__is_draft=False)))
     table = tables.TagOverviewTable
 
-    permission_required = "netbox_reservations.view_tag_overview"
+    permission_required = "netbox_reservations.view_claim"
 
-# reservation_list = ArrayAgg('claims__reservation__name', filter=Q(claims__reservation__start_date__lte=timezone.now(),
-#                                                                  claims__reservation__end_date__gte=timezone.now(),
-#                                                                  claims__reservation__is_draft=False)))
 
-# Tag.objects.exclude(~Exists(models.Reservation.objects.filter(
-#        claims__tag=OuterRef('pk'),
-#        start_date__lte=timezone.now(),
-#        end_date__gte=timezone.now()
-#    )))
-
-# class TagOverviewListView(generic.ObjectListView):
-#    queryset = Tag.objects.filter().annotate(
-#        claim_count=Count('claims')
-#    ).filter(claim_count=0)
-#    table = tables.TagOverviewTable
-#
-#    permission_required = "netbox_reservations.view_tag_overview"
+def getAllReservationsForTaggable(taggable):
+    return models.Reservation.objects.filter(claims__tag__in=taggable.tags.all()).distinct()

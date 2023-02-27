@@ -1,5 +1,6 @@
 import django_tables2 as tables
 
+from dcim.models import Device
 from netbox.tables import NetBoxTable, ChoiceFieldColumn, ColoredLabelColumn, columns
 from .models import Reservation, Claim
 from extras.models import Tag
@@ -95,3 +96,10 @@ class TagOverviewTable(NetBoxTable):
         model = Tag
         fields = ('pk', 'id', 'color', 'name', 'slug', 'description', 'reservation_count')
         default_columns = ('name', 'reservation_count')
+
+
+class DeviceCollisionTable(NetBoxTable):
+    class Meta(NetBoxTable.Meta):
+        model = Device
+        fields = ('pk', 'id', 'name', 'tags')
+        default_columns = ('name', 'tags')

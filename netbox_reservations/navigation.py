@@ -45,6 +45,10 @@ _overview_menu_items = (
         link_text='Unclaimed Tags',
         permissions=["netbox_reservations.view_claim"]
     ),
+    PluginMenuItem(
+        link='plugins:netbox_reservations:claim_test',
+        link_text='Test',
+        permissions=["netbox_reservations.view_claim"])
 )
 
 plugin_settings = settings.PLUGINS_CONFIG.get('netbox_reservations', {})

@@ -1,0 +1,19 @@
+{% extends 'base/layout.html' %}
+  {% block title %}
+    Test
+  {% endblock %}
+  {% block content %}
+
+    {% for datapacket in data %}
+        <a href="{{datapacket.reservation.get_absolute_url}}">
+          <h4>{{datapacket.reservation.name}}</h4>
+        </a>
+        {% for claim in datapacket.claims %}
+          <a href="{{claim.get_absolute_url}}">
+            <p>{{claim.tag.name}}</p>
+          </a>
+          <p>{{claim.restriction}}</p>
+        {% endfor %}
+      <hr>
+    {% endfor %}
+  {% endblock %}

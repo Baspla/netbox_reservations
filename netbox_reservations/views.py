@@ -1,6 +1,9 @@
+from logging import warning
+
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Count, Subquery, OuterRef, Exists, Q
 from django.utils import timezone
+from django.views.generic import TemplateView
 
 from dcim.models import Device
 from netbox.views import generic
@@ -104,5 +107,15 @@ class TagOverviewListView(generic.ObjectListView):
     permission_required = "netbox_reservations.view_claim"
 
 
-def getAllReservationsForTaggable(taggable):
-    return models.Reservation.objects.filter(claims__tag__in=taggable.tags.all()).distinct()
+class CustomClaimTestView(TemplateView):
+    template_name = 'netbox_reservations/test.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        data = []
+        for reservation in Reservation.objects.all():
+            datapacket = {'reservation': reservation, 'claims': reservation.claims.all()}
+            data.append(datapacket)
+        context['data'] = data
+        return context
+

@@ -106,16 +106,3 @@ class TagOverviewListView(generic.ObjectListView):
 
     permission_required = "netbox_reservations.view_claim"
 
-
-class CustomClaimTestView(TemplateView):
-    template_name = 'netbox_reservations/test.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        data = []
-        for reservation in Reservation.objects.all():
-            datapacket = {'reservation': reservation, 'claims': reservation.claims.all()}
-            data.append(datapacket)
-        context['data'] = data
-        return context
-

@@ -28,6 +28,5 @@ urlpatterns = (
 
     # Tag Overview
     path('tags/', views.TagOverviewListView.as_view(), name='tag_overview_list'),
-    path('test/', views.CustomClaimTestView.as_view(), name='claim_test'),
 
 )

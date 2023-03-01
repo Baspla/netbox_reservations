@@ -1,7 +1,7 @@
 from logging import warning
 
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Count, Subquery, OuterRef, Exists, Q
+from django.db.models import Count, Subquery, OuterRef, Exists, Q, When, Case, Value
 from django.utils import timezone
 from django.views.generic import TemplateView
 
@@ -59,10 +59,10 @@ class ReservationDeleteView(generic.ObjectDeleteView):
 
     permission_required = "netbox_reservations.delete_reservation"
 
+    #
+    # Claim views
+    #
 
-#
-# Claim views
-#
 
 class ClaimView(generic.ObjectView):
     queryset = models.Claim.objects.all()
@@ -71,7 +71,7 @@ class ClaimView(generic.ObjectView):
 
 
 class ClaimListView(generic.ObjectListView):
-    queryset = models.Claim.objects.all()
+    queryset = getClaimsWithStatus()
     table = tables.ClaimTable
     filterset = filtersets.ClaimFilterSet
     filterset_form = forms.ClaimFilterForm
@@ -105,4 +105,3 @@ class TagOverviewListView(generic.ObjectListView):
     table = tables.TagOverviewTable
 
     permission_required = "netbox_reservations.view_claim"
-

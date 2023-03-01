@@ -17,7 +17,9 @@ class ReservationTable(NetBoxTable):
         linkify=True
     )
     claim_count = tables.Column()
-    status = tables.Column()
+    status = tables.Column(
+        order_by=('is_draft', 'start_date', 'end_date'),
+    )
 
     class Meta(NetBoxTable.Meta):
         model = Reservation

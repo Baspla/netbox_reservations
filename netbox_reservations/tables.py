@@ -41,11 +41,44 @@ class ReducedClaimTable(NetBoxTable):
         )
 
 
+class CustomColoredMPTTColumn(tables.TemplateColumn):
+        """
+        Display a nested hierarchy for MPTT-enabled models.
+        """
+        template_code = """
+            {% load helpers %}
+              {% if not table.order_by %}
+                {% for i in record.level|as_range %}<i class="mdi mdi-circle-small"></i>{% endfor %}
+              {% endif %}
+              {% if value %}
+                <span class="badge" style="color: {{ value.color|fgcolor }}; background-color: #{{ value.color }}">
+                  <div id="VORHER"></div>
+                  <a href="{{ value.get_absolute_url }}">{{ value }}</a>
+                  <div id="NACHER"></div>
+                </span>
+                  <div id="AUSSEN"></div>
+              {% else %}
+                &mdash;
+              {% endif %}
+        """
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(
+                template_code=self.template_code,
+                attrs={'td': {'class': 'text-nowrap'}},
+                *args,
+                **kwargs
+            )
+
+        def value(self, value):
+            return value
+
+
 class ClaimTable(NetBoxTable):
+    tag = CustomColoredMPTTColumn()
     reservation = tables.Column(
         linkify=True
     )
-    tag = ColoredLabelColumn()
     restriction = ChoiceFieldColumn()
     start_date = tables.Column(accessor='reservation.start_date')
     end_date = tables.Column(accessor='reservation.end_date')
@@ -56,7 +89,7 @@ class ClaimTable(NetBoxTable):
             'pk', 'id', 'reservation', 'tag', 'restriction', 'description', 'start_date', 'end_date',
         )
         default_columns = (
-            'id', 'reservation', 'tag', 'restriction', 'start_date', 'end_date',
+            'tag','id', 'reservation', 'restriction', 'start_date', 'end_date',
         )
 
 

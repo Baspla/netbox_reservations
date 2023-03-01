@@ -44,10 +44,15 @@ class ClaimForm(NetBoxModelForm):
        queryset=Tag.objects.all()
     )
 
+    parent = DynamicModelChoiceField(
+        queryset=Claim.objects.all(),
+        required=False
+    )
+
     class Meta:
         model = Claim
         fields = (
-            'reservation', 'tag', 'restriction', 'description',  'tags',
+            'reservation', 'tag', 'restriction', 'description',  'tags', 'parent'
         )
 
 

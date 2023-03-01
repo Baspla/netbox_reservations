@@ -17,6 +17,15 @@ class ClaimValidator(CustomValidator):
         # untersuchtes_objekt = instance.tag.claims
         # dir_von_objekt = dir(untersuchtes_objekt)
         # dict_von_objekt= untersuchtes_objekt.__dict__
+        if instance.pk and instance.parent and instance.parent in instance.get_descendants(include_self=True):
+            self.fail(
+                f"Cannot assign self or child {instance._meta.verbose_name} as parent.",field="parent"
+            )
+        if instance.pk and instance.parent and instance.parent.reservation != instance.reservation:
+            self.fail(
+                f"Cannot assign {instance._meta.verbose_name} of other reservation as parent.",field="parent"
+            )
+
         for claim in instance.tag.claims.all():
             # if claim.reservation.is_draft:
             #    continue

@@ -71,7 +71,7 @@ class ClaimView(generic.ObjectView):
 
 
 class ClaimListView(generic.ObjectListView):
-    queryset = getClaimsWithStatus()
+    queryset = models.Claim.objects.all()
     table = tables.ClaimTable
     filterset = filtersets.ClaimFilterSet
     filterset_form = forms.ClaimFilterForm

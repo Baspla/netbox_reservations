@@ -19,7 +19,7 @@ class ClaimFilterSet(NetBoxModelFilterSet):
         qs_filter = (
             Q(description__icontains=value) |
             Q(reservation__name__icontains=value) |
-            Q(reservation__contact__icontains=value) |
+            Q(reservation__contact__name__icontains=value) |
             Q(reservation__tenant__name__icontains=value) |
             Q(tags__name__icontains=value)
         )

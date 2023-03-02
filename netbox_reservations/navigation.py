@@ -9,7 +9,7 @@ reservation_buttons = [
         title='Add',
         icon_class='mdi mdi-plus-thick',
         color=ButtonColorChoices.GREEN,
-        permissions=["netbox_reservations.add_claim"]
+        permissions=["netbox_reservations.add_reservation"]
     )
 ]
 
@@ -19,7 +19,7 @@ claim_buttons = [
         title='Add',
         icon_class='mdi mdi-plus-thick',
         color=ButtonColorChoices.GREEN,
-        permissions=["netbox_reservations.add_reservation"]
+        permissions=["netbox_reservations.add_claim"]
     )
 ]
 

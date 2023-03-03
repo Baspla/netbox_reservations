@@ -1,6 +1,4 @@
 from extras.plugins import PluginConfig
-from version import __version__
-
 
 class NetBoxReservationsConfig(PluginConfig):
     name = 'netbox_reservations'

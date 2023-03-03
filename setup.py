@@ -1,9 +1,8 @@
 from setuptools import find_packages, setup
-from version import __version__
 
 setup(
     name='netbox-reservations',
-    version=__version__,
+    version='1.1',
     description='',
     install_requires=[],
     packages=find_packages(),

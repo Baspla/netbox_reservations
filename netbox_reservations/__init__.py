@@ -1,5 +1,5 @@
 from extras.plugins import PluginConfig
-from version import __version__
+from netbox_reservations.util.version import __version__
 
 
 class NetBoxReservationsConfig(PluginConfig):

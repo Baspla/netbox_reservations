@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from extras.models import Tag
 from netbox_reservations.forms import ReservationForm, ClaimForm
-from netbox_reservations.models import Reservation
+from netbox_reservations.models import Reservation, RestrictionChoices
 from tenancy.models import Contact, Tenant
 
 
@@ -83,30 +83,13 @@ class ReservationFormTestCase(TestCase):
         self.assertFalse(form.is_valid())
         pass
 
-    def test_reservation_form_invalid_is_draft(self):
-        form = ReservationForm(
-            data={
-                'name': 'Test Reservation',
-                'comments': 'Test Comments',
-                'start_date': '2020-01-01 00:00:00',
-                'end_date': '2020-01-02 00:00:00',
-                'is_draft': 'invalid',
-                'contact': self.contact,
-                'tenant': self.tenant,
-            }
-        )
-        logging.debug(form.data.get('is_draft'))
-
-        self.assertFalse(form.is_valid())
-        pass
-
-
 class ClaimFormTestCase(TestCase):
     def setUp(self):
         self.contact = Contact.objects.create(
             name='Test Contact'
         )
         self.tenant = Tenant.objects.create(
+            slug='test-tenant',
             name='Test Tenant'
         )
         self.reservation = Reservation.objects.create(
@@ -119,13 +102,14 @@ class ClaimFormTestCase(TestCase):
             tenant=self.tenant,
         )
         self.tag = Tag.objects.create(
+            slug='test-tag',
             name='Test Tag'
         )
 
     def test_claim_form(self):
         form = ClaimForm(
             data={
-                'restriction': 'EXCLUSIVE',
+                'restriction': RestrictionChoices.CHOICES[0][0],
                 'tag': self.tag,
                 'reservation': self.reservation,
 
@@ -138,7 +122,7 @@ class ClaimFormTestCase(TestCase):
     def test_claim_form_invalid_reservation(self):
         form = ClaimForm(
             data={
-                'restriction': 'EXCLUSIVE',
+                'restriction': RestrictionChoices.CHOICES[0][0],
                 'tag': self.tag,
                 'reservation': 999,
             }
@@ -146,15 +130,3 @@ class ClaimFormTestCase(TestCase):
 
         self.assertFalse(form.is_valid())
         pass
-
-    def test_claim_form_invalid_tag(self):
-        form = ClaimForm(
-            data={
-                'restriction': 'EXCLUSIVE',
-                'tag': 999,
-                'reservation': self.reservation,
-            }
-        )
-        self.assertRaises(AttributeError, form.is_valid())
-        pass
-

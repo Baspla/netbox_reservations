@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
 
@@ -105,4 +106,96 @@ class ClaimTestCase(TestCase):
 
 class CollisionTestCase(TestCase):
     def setUp(self):
+        self.reservationA = Reservation.objects.create(
+            name='Test Reservation A',
+            comments='Test Comments',
+            start_date=timezone.now(),
+            end_date=timezone.now() + timedelta(days=2),
+            is_draft=False,
+            contact=Contact.objects.create(
+                name='Test Contact A'
+            ),
+            tenant=Tenant.objects.create(
+                slug='test-tenant-a',
+                name='Test Tenant A'
+            ),
+        )
+        self.reservationB = Reservation.objects.create(
+            name='Test Reservation B',
+            comments='Test Comments',
+            start_date=timezone.now() + timedelta(days=1),
+            end_date=timezone.now() + timedelta(days=3),
+            is_draft=True,
+            contact=Contact.objects.create(
+                name='Test Contact B'
+            ),
+            tenant=Tenant.objects.create(
+                slug='test-tenant-b',
+                name='Test Tenant B'
+            ),
+        )
+        self.reservationC = Reservation.objects.create(
+            name='Test Reservation C',
+            comments='Test Comments',
+            start_date=timezone.now() - timedelta(days=4),
+            end_date=timezone.now() + timedelta(days=4),
+            is_draft=False,
+            contact=Contact.objects.create(
+                name='Test Contact C'
+            ),
+            tenant=Tenant.objects.create(
+                slug='test-tenant-c',
+                name='Test Tenant C'
+            ),
+        )
+
+        self.tag = Tag.objects.create(
+            slug='test-tag',
+            name='Test Tag'
+        )
+        pass
+
+    def test_collision_A_B(self):
+        self.claimA = self.reservationA.claims.create(
+            reservation=self.reservationA,
+            restriction=RestrictionChoices.CHOICES[0][0],
+            tag=self.tag,
+            description='Test Claim Description',
+        )
+        self.assertRaises(ValidationError, self.reservationB.claims.create,
+            reservation=self.reservationB,
+            restriction=RestrictionChoices.CHOICES[0][0],
+            tag=self.tag,
+            description='Test Claim Description',
+        )
+        pass
+
+    def test_collision_A_C(self):
+        self.claimA = self.reservationA.claims.create(
+            reservation=self.reservationA,
+            restriction=RestrictionChoices.CHOICES[0][0],
+            tag=self.tag,
+            description='Test Claim Description',
+        )
+        self.assertRaises(ValidationError, self.reservationC.claims.create,
+            reservation=self.reservationC,
+            restriction=RestrictionChoices.CHOICES[1][0],
+            tag=self.tag,
+            description='Test Claim Description',
+        )
+        pass
+
+    def test_collision_B_C(self):
+        self.claimB = self.reservationB.claims.create(
+            reservation=self.reservationB,
+            restriction=RestrictionChoices.CHOICES[1][0],
+            tag=self.tag,
+            description='Test Claim Description',
+        )
+        self.claimC = self.reservationC.claims.create(
+            reservation=self.reservationC,
+            restriction=RestrictionChoices.CHOICES[1][0],
+            tag=self.tag,
+            description='Test Claim Description',
+        )
         pass

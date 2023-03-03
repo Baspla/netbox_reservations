@@ -41,8 +41,10 @@ class ReservationSerializer(NetBoxModelSerializer):
     claim_count = serializers.IntegerField(read_only=True)
     contact = NestedContactSerializer()
     tenant = NestedTenantSerializer()
+    claims = NestedClaimSerializer(many=True, read_only=True)
     start_date = serializers.DateTimeField()
     end_date = serializers.DateTimeField()
+    status = serializers.CharField(read_only=True)
 
     class Meta:
         model = Reservation
@@ -50,7 +52,7 @@ class ReservationSerializer(NetBoxModelSerializer):
             'id', 'url', 'display', 'name', 'contact', 'tenant',
             'comments', 'tags', 'custom_fields', 'created',
             'last_updated', 'claim_count', 'start_date',
-            'end_date',
+            'end_date','is_draft','claims','status'
         )
 
 

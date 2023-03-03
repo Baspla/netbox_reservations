@@ -17,6 +17,11 @@ class ClaimValidator(CustomValidator):
         # untersuchtes_objekt = instance.tag.claims
         # dir_von_objekt = dir(untersuchtes_objekt)
         # dict_von_objekt= untersuchtes_objekt.__dict__
+        if instance.tag is None:
+            self.fail(
+                "Tag is required",
+                field='tag')
+            return
         for claim in instance.tag.claims.all():
             # if claim.reservation.is_draft:
             #    continue
@@ -43,7 +48,7 @@ class ClaimValidator(CustomValidator):
 class ReservationValidator(CustomValidator):
 
     def validate(self, instance):
-        if instance.start_date > instance.end_date:
+        if instance.start_date >= instance.end_date:
             self.fail(
                 "Start date must be before end date",
                 field='start_date')

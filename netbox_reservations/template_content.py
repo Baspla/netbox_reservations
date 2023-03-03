@@ -1,3 +1,6 @@
+from django.db.models import Q, F
+
+from extras.models import Tag
 from extras.plugins import PluginTemplateExtension
 from .models import Claim, Reservation
 from .tables import ClaimTable, ReservationTable, ExtendedClaimTable
@@ -37,7 +40,6 @@ class TagClaimsExtension(PluginTemplateExtension):
                 'related_claims_table': claims_table
             }
         )
-
 
 class ContactReservationsExtension(PluginTemplateExtension):
     model = 'tenancy.contact'

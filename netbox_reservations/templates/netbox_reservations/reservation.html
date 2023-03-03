@@ -67,18 +67,28 @@
     </div>
   </div>
   <div class="row">
-    <div class="col col-md-12">
-      <div class="card">
-        <h5 class="card-header">
-          Claims
-        </h5>
-        <div class="card-body table-responsive">
-          {% render_table claims_table %}
-        </div>
-        <div class="card-footer">
-          <a href="{% url 'plugins:netbox_reservations:claim_add' %}?reservation={{ object.id }}" type="button" class="btn btn-sm btn-success">
-            <i class="mdi mdi-plus-thick"></i> Add Claim
-          </a>
+  <div class="col col-md-12">
+  <div class="card">
+    <h5 class="card-header">
+      Claims
+    </h5>
+    <div class="card-body table-responsive">
+      {% render_table claims_table %}
+    </div>
+    <div class="card-footer">
+      <a href="{% url 'plugins:netbox_reservations:claim_add' %}?reservation={{ object.id }}" type="button"
+         class="btn btn-sm btn-success">
+        <i class="mdi mdi-plus-thick"></i> Add Claim
+      </a>
+    </div>
+  </div>
+  <div class="col col-md-12">
+    <div class="card">
+      <h5 class="card-header">
+        Overlapping Reservations
+      </h5>
+      <div class="card-body table-responsive">
+        {% render_table conflict_table %}
       </div>
     </div>
   </div>

@@ -17,6 +17,11 @@ class ClaimValidator(CustomValidator):
         # untersuchtes_objekt = instance.tag.claims
         # dir_von_objekt = dir(untersuchtes_objekt)
         # dict_von_objekt= untersuchtes_objekt.__dict__
+        if instance.tag is None:
+            self.fail(
+                "Tag is required",
+                field='tag')
+            return
         for claim in instance.tag.claims.all():
             # if claim.reservation.is_draft:
             #    continue

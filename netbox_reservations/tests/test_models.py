@@ -7,6 +7,7 @@ from extras.models import Tag
 from netbox_reservations.models import Reservation, RestrictionChoices, Claim
 from tenancy.models import Contact, Tenant
 
+
 # ./manage.py test netbox_reservations
 
 class ReservationTestCase(TestCase):
@@ -20,8 +21,8 @@ class ReservationTestCase(TestCase):
 
         self.reservation_name = 'Test Reservation'
         self.reservation_comments = 'Test Comments'
-        self.reservation_start_date = timezone.now()
-        self.reservation_end_date = timezone.now() + timedelta(days=1)
+        self.reservation_start_date = timezone.now() + timedelta(days=1)
+        self.reservation_end_date = timezone.now() + timedelta(days=2)
         self.reservation_is_draft = False
 
         self.reservation = Reservation.objects.create(
@@ -95,8 +96,13 @@ class ClaimTestCase(TestCase):
 
     def test_create_claim(self):
         self.assertTrue(isinstance(self.claim, Claim))
-        self.assertEqual(self.claim.__str__(), "Claim for "+self.tag.name+" by "+self.reservation.name)
+        self.assertEqual(self.claim.__str__(), "Claim for " + self.tag.name + " by " + self.reservation.name)
         self.assertEqual(self.claim.reservation, self.reservation)
         self.assertEqual(self.claim.restriction, self.claim_restriction)
         self.assertEqual(self.claim.tag, self.tag)
         self.assertEqual(self.claim.description, self.claim_description)
+
+
+class CollisionTestCase(TestCase):
+    def setUp(self):
+        pass

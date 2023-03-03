@@ -1,1 +1,2 @@
 recursive-include netbox_reservations/templates *.html
+include version.py

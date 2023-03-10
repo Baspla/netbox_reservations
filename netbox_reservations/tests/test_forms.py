@@ -23,7 +23,7 @@ class ReservationFormTestCase(TestCase):
         form = ReservationForm(
             data={
                 'name': 'Test Reservation',
-                'comments': 'Test Comments',
+                'description': 'Test Comments',
                 'start_date': '2020-01-01 00:00:00',
                 'end_date': '2020-01-02 00:00:00',
                 'is_draft': False,
@@ -39,7 +39,7 @@ class ReservationFormTestCase(TestCase):
         form = ReservationForm(
             data={
                 'name': 'Test Reservation',
-                'comments': 'Test Comments',
+                'description': 'Test Comments',
                 'start_date': '2020-01-02 00:00:00',
                 'end_date': '2020-01-01 00:00:00',
                 'is_draft': False,
@@ -55,7 +55,7 @@ class ReservationFormTestCase(TestCase):
         form = ReservationForm(
             data={
                 'name': 'Test Reservation',
-                'comments': 'Test Comments',
+                'description': 'Test Comments',
                 'start_date': '2020-01-01 00:00:00',
                 'end_date': '2020-01-02 00:00:00',
                 'is_draft': False,
@@ -71,7 +71,7 @@ class ReservationFormTestCase(TestCase):
         form = ReservationForm(
             data={
                 'name': 'Test Reservation',
-                'comments': 'Test Comments',
+                'description': 'Test Comments',
                 'start_date': '2020-01-01 00:00:00',
                 'end_date': '2020-01-02 00:00:00',
                 'is_draft': False,
@@ -94,7 +94,7 @@ class ClaimFormTestCase(TestCase):
         )
         self.reservation = Reservation.objects.create(
             name='Test Reservation',
-            comments='Test Comments',
+            description='Test Comments',
             start_date='2020-01-01 00:00:00',
             end_date='2020-01-02 00:00:00',
             is_draft=False,

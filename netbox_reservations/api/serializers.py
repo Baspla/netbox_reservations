@@ -50,7 +50,7 @@ class ReservationSerializer(NetBoxModelSerializer):
         model = Reservation
         fields = (
             'id', 'url', 'display', 'name', 'contact', 'tenant',
-            'comments', 'tags', 'custom_fields', 'created',
+            'description', 'tags', 'custom_fields', 'created',
             'last_updated', 'claim_count', 'start_date',
             'end_date','is_draft','claims','status'
         )

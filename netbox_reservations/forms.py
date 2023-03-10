@@ -28,11 +28,10 @@ class ReservationForm(NetBoxModelForm):
         help_text='If checked, this reservation will be marked as a draft instead of planned/active/overdue.',
         initial=True
     )
-    comments = CommentField()
 
     class Meta:
         model = Reservation
-        fields = ('name', 'comments', 'contact', 'tenant', 'start_date', 'end_date', 'is_draft', 'tags')
+        fields = ('name', 'description', 'contact', 'tenant', 'start_date', 'end_date', 'is_draft', 'tags')
 
 
 class ClaimForm(NetBoxModelForm):

@@ -25,7 +25,7 @@ class ReservationTable(NetBoxTable):
         model = Reservation
         fields = (
             'pk', 'id', 'name', 'claim_count', 'contact', 'tenant', 'is_draft', 'status', 'start_date', 'end_date',
-            'comments')
+            'description')
         default_columns = ('name', 'contact', 'tenant', 'claim_count', 'start_date', 'end_date', 'is_draft', 'status')
 
 

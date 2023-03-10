@@ -21,7 +21,8 @@ class Reservation(NetBoxModel):
     name = models.CharField(
         max_length=100
     )
-    comments = models.TextField(
+    description = models.CharField(
+        max_length=500,
         blank=True
     )
     contact = models.ForeignKey(

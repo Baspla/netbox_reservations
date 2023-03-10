@@ -6,6 +6,9 @@ from django.utils import timezone
 from netbox.models import NetBoxModel
 from netbox_reservations.validators import ClaimValidator, ReservationValidator
 from utilities.choices import ChoiceSet
+from mptt.models import MPTTModel, TreeForeignKey
+
+from utilities.mptt import TreeManager
 
 
 class RestrictionChoices(ChoiceSet):
@@ -73,12 +76,20 @@ class Reservation(NetBoxModel):
         return reverse('plugins:netbox_reservations:reservation', args=[self.pk])
 
 
-class Claim(NetBoxModel):
+class Claim(NetBoxModel, MPTTModel):
     reservation = models.ForeignKey(
         to=Reservation,
         on_delete=models.CASCADE,
         related_name='claims'
     )
+    parent = TreeForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='children'
+    )
+    objects = TreeManager()
     tag = models.ForeignKey(
         to='extras.Tag',
         on_delete=models.PROTECT,
@@ -108,6 +119,9 @@ class Claim(NetBoxModel):
     class Meta:
         ordering = ('reservation', 'tag')
         unique_together = ('reservation', 'tag')
+
+    class MPTTMeta:
+        order_insertion_by = ('tag',)
 
     def __str__(self):
         return f'Claim for {self.tag} by {self.reservation}'

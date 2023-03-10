@@ -31,6 +31,16 @@
               <th scope="row">Description</th>
               <td>{{ object.description|placeholder }}</td>
             </tr>
+            <tr>
+              <th scope="row">Parent</th>
+              <td>
+                {% if object.parent %}
+                  <a href="{{ object.parent.get_absolute_url }}">{{ object.parent }}</a>
+                {% else %}
+                  {{ ''|placeholder }}
+                {% endif %}
+              </td>
+            </tr>
           </table>
         </div>
       </div>

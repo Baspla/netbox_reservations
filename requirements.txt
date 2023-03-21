@@ -1,3 +1,4 @@
 setuptools~=65.5.1
 Django~=4.1.6
 django-filter~=22.1
+django-tree-queries~=0.14.0

@@ -1,8 +1,10 @@
 from django.core.exceptions import ValidationError
-
+from tree_queries.query import TreeQuerySet
 from extras.validators import CustomValidator
+import netbox_reservations.models as models
 
 TIME_FORMAT = '%Y-%m-%d %H:%M'
+
 
 class ClaimValidator(CustomValidator):
     # Beim Erstellen von Claims wird überprüft ob
@@ -11,20 +13,17 @@ class ClaimValidator(CustomValidator):
     # bei restriction == 'SHARED':
     #   ein anderes Claim mit dem selben Tag als EXCLUSIVE existiert. Andere mit SHARED sind OK
     def validate(self, instance):
-        # if instance.reservation.is_draft:
-        #    return
-        # Debugging Variablen
-        # untersuchtes_objekt = instance.tag.claims
-        # dir_von_objekt = dir(untersuchtes_objekt)
-        # dict_von_objekt= untersuchtes_objekt.__dict__
-        if instance.pk and instance.parent and instance.parent in instance.get_descendants(include_self=True):
-            self.fail(
-                f"Cannot assign self or child {instance._meta.verbose_name} as parent.",field="parent"
-            )
-        if instance.pk and instance.parent and instance.parent.reservation != instance.reservation:
-            self.fail(
-                f"Cannot assign {instance._meta.verbose_name} of other reservation as parent.",field="parent"
-            )
+        tqs = TreeQuerySet(model=models.Claim)
+        children = tqs.descendants(instance, include_self=True)
+        if instance.parent:
+            if instance.pk and instance.parent in children:
+                self.fail(
+                    f"Cannot assign self or child {instance._meta.verbose_name} as parent.", field="parent"
+                )
+            if instance.parent.reservation != instance.reservation:
+                self.fail(
+                    f"Cannot assign {instance._meta.verbose_name} of other reservation as parent.", field="parent"
+                )
 
         for claim in instance.tag.claims.all():
             # if claim.reservation.is_draft:
@@ -45,7 +44,8 @@ class ClaimValidator(CustomValidator):
                 elif instance.restriction == 'EXCLUSIVE':
                     self.fail(
                         "You can't exclusively claim a tag that is already in shared use by reservation '"
-                        + claim.reservation.name + "' from " + S2.strftime(TIME_FORMAT) + " to " + E2.strftime(TIME_FORMAT) + ".",
+                        + claim.reservation.name + "' from " + S2.strftime(TIME_FORMAT) + " to " + E2.strftime(
+                            TIME_FORMAT) + ".",
                         field='restriction')
 
 

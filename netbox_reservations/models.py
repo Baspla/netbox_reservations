@@ -1,14 +1,15 @@
-from django.core.exceptions import ValidationError
+from tree_queries.fields import TreeNodeForeignKey
+from tree_queries.models import TreeNode
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from tree_queries.query import TreeQuerySet
 
 from netbox.models import NetBoxModel
 from netbox_reservations.validators import ClaimValidator, ReservationValidator
 from utilities.choices import ChoiceSet
-from mptt.models import MPTTModel, TreeForeignKey
-
-from utilities.mptt import TreeManager
+from utilities.querysets import RestrictedQuerySet
 
 
 class RestrictionChoices(ChoiceSet):
@@ -44,6 +45,10 @@ class Reservation(NetBoxModel):
     )
     is_draft = models.BooleanField()
 
+    clone_fields = (
+        'contact', 'tenant', 'start_date', 'end_date', 'is_draft'
+    )
+
     prerequisite_models = (
         'tenancy.Contact',
         'tenancy.Tenant',
@@ -76,20 +81,25 @@ class Reservation(NetBoxModel):
         return reverse('plugins:netbox_reservations:reservation', args=[self.pk])
 
 
-class Claim(NetBoxModel, MPTTModel):
+class ClaimQuerySet(TreeQuerySet, RestrictedQuerySet):
+    def has_filters(self):
+        return self._has_filters()
+
+
+class Claim(NetBoxModel, TreeNode):
     reservation = models.ForeignKey(
         to=Reservation,
         on_delete=models.CASCADE,
         related_name='claims'
     )
-    parent = TreeForeignKey(
-        'self',
-        on_delete=models.SET_NULL,
-        null=True,
+    parent = TreeNodeForeignKey(
+        "self",
         blank=True,
-        related_name='children'
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("parent"),
+        related_name="children",
     )
-    objects = TreeManager()
     tag = models.ForeignKey(
         to='extras.Tag',
         on_delete=models.PROTECT,
@@ -102,6 +112,10 @@ class Claim(NetBoxModel, MPTTModel):
     description = models.CharField(
         max_length=500,
         blank=True
+    )
+
+    clone_fields = (
+        'reservation',
     )
 
     prerequisite_models = (
@@ -117,7 +131,6 @@ class Claim(NetBoxModel, MPTTModel):
         return super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ('reservation', 'tag')
         unique_together = ('reservation', 'tag')
 
     class MPTTMeta:

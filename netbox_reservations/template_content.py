@@ -3,7 +3,7 @@ from django.db.models import Q, F
 from extras.models import Tag
 from extras.plugins import PluginTemplateExtension
 from .models import Claim, Reservation
-from .tables import ClaimTable, ReservationTable, ExtendedClaimTable
+from .tables import ReservationTable, ExtendedClaimTable
 
 
 class DeviceClaimsExtension(PluginTemplateExtension):

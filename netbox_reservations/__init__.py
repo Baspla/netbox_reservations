@@ -7,7 +7,7 @@ class NetBoxReservationsConfig(PluginConfig):
     description = 'Manage reservations in NetBox'
     author = 'Tim Morgner'
     author_email = 'tim.morgner@telekom.de'
-    version = '1.1'
+    version = '1.2'
     base_url = 'reservations'
     min_version = '3.4.0'
     max_version = '3.4.99'

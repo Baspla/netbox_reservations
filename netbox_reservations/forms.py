@@ -5,7 +5,7 @@ from extras.models import Tag
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
 from utilities.forms import DynamicModelMultipleChoiceField
 from utilities.forms.fields import CommentField, DynamicModelChoiceField
-from .models import Reservation, Claim, RestrictionChoices
+from .models import Reservation, Claim, RestrictionChoices, ClaimQuerySet
 
 
 class DateTimeInput(forms.DateTimeInput):
@@ -28,44 +28,53 @@ class ReservationForm(NetBoxModelForm):
         help_text='If checked, this reservation will be marked as a draft instead of planned/active/overdue.',
         initial=True
     )
-    comments = CommentField()
 
     class Meta:
         model = Reservation
-        fields = ('name', 'comments', 'contact', 'tenant', 'start_date', 'end_date', 'is_draft', 'tags')
+        fields = ('name', 'description', 'contact', 'tenant', 'start_date', 'end_date', 'is_draft', 'tags')
 
 
 class ClaimForm(NetBoxModelForm):
     reservation = DynamicModelChoiceField(
-        queryset=Reservation.objects.all()
+        queryset=Reservation.objects.all(),
+        required=True,
     )
 
     tag = DynamicModelChoiceField(
-       queryset=Tag.objects.all()
+        queryset=Tag.objects.all()
+    )
+
+    parent = DynamicModelChoiceField(
+        # Filter out self and children
+        queryset=Claim.objects.all(),
+        required=False,
+        query_params={
+            'reservation': '$reservation'
+        }
     )
 
     class Meta:
         model = Claim
         fields = (
-            'reservation', 'tag', 'restriction', 'description',  'tags',
+            'reservation', 'tag', 'restriction', 'parent', 'description', 'tags'
         )
 
 
 class ClaimFilterForm(NetBoxModelFilterSetForm):
     model = Claim
-    reservation = DynamicModelMultipleChoiceField(
+    reservation = DynamicModelChoiceField(
         queryset=Reservation.objects.all(),
         required=False
     )
-
-    # Tag filter is not working yet (picks id but filters for slug)
     tag = DynamicModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         required=False
     )
     restriction = forms.MultipleChoiceField(
         choices=RestrictionChoices,
-        required=False
+        required=False,
+        # This is no longer needed, but I'm leaving it here for reference
+        # help_text='Filtering may show incorrect indentation'
     )
 
 

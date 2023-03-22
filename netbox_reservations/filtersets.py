@@ -38,7 +38,7 @@ class ReservationFilterSet(NetBoxModelFilterSet):
         if not value.strip():
             return queryset
         qs_filter = (
-            Q(comments__icontains=value) |
+            Q(description__icontains=value) |
             Q(name__icontains=value) |
             Q(contact__name__icontains=value) |
             Q(tenant__name__icontains=value)

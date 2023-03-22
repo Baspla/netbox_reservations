@@ -6,6 +6,61 @@ from .models import Reservation, Claim
 from extras.models import Tag
 
 
+class CustomColoredMPTTColumn(tables.TemplateColumn):
+    """
+        Display a nested hierarchy for MPTT-enabled models.
+        has_filter is set if any GET Parameters are sent.
+        If this fails at any point you could test if filter is equal to (AND: ) or you can use the has_filter variable.
+        has_filter and filter are provided as additional context variables by views.py
+        """
+    template_code = """
+            {% load helpers %}
+            <!-- filter used: {{ filter }} -->
+            {% if filter == "(AND: )" or has_acceptable_filter or not filter %}
+                {% if not table.order_by %}
+                    {% for i in record.tree_depth|as_range %}<i class="mdi mdi-circle-small"></i>{% endfor %}
+                {% endif %}
+            {% endif %}
+            {% if value %}
+                <span class="badge" style="color: {{ value.color|fgcolor }}; background-color: #{{ value.color }}">
+                    <a href="{{ value.get_absolute_url }}">{{ value }}</a>
+                </span>
+            {% else %}
+                &mdash;
+            {% endif %}
+        """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(
+            template_code=self.template_code,
+            attrs={'td': {'class': 'text-nowrap'}},
+            *args,
+            **kwargs
+        )
+
+    def value(self, value):
+        return value
+
+
+class CustomNamedClaimColumn(tables.TemplateColumn):
+    template_code = """
+            {% load helpers %}
+            {% if value %}
+            Link to Claim
+            {% else %}
+            &mdash;
+            {% endif %}
+        """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(
+            template_code=self.template_code,
+            attrs={'td': {'class': 'text-nowrap'}},
+            *args,
+            **kwargs
+        )
+
+
 class ReservationTable(NetBoxTable):
     name = tables.Column(
         linkify=True
@@ -25,40 +80,54 @@ class ReservationTable(NetBoxTable):
         model = Reservation
         fields = (
             'pk', 'id', 'name', 'claim_count', 'contact', 'tenant', 'is_draft', 'status', 'start_date', 'end_date',
-            'comments')
+            'description')
         default_columns = ('name', 'contact', 'tenant', 'claim_count', 'start_date', 'end_date', 'is_draft', 'status')
 
 
 class ReducedClaimTable(NetBoxTable):
-    tag = ColoredLabelColumn()
+    tag = CustomColoredMPTTColumn()
     restriction = ChoiceFieldColumn()
+    claim = CustomNamedClaimColumn(
+        linkify=True,
+        verbose_name='Link',
+        accessor='id',
+        visible=True,
+        orderable=False,
+    )
 
     class Meta(NetBoxTable.Meta):
         model = Claim
         fields = (
-            'pk', 'id', 'tag', 'restriction', 'description',
+            'pk', 'id', 'tag', 'restriction', 'claim', 'description',
         )
         default_columns = (
-            'id', 'tag', 'restriction',
+            'id', 'tag', 'restriction',  'description',
         )
 
 
 class ClaimTable(NetBoxTable):
+    tag = CustomColoredMPTTColumn()
     reservation = tables.Column(
         linkify=True
     )
-    tag = ColoredLabelColumn()
     restriction = ChoiceFieldColumn()
     start_date = tables.Column(accessor='reservation.start_date')
     end_date = tables.Column(accessor='reservation.end_date')
+    claim = CustomNamedClaimColumn(
+        linkify=True,
+        verbose_name='Link',
+        accessor='id',
+        visible=True,
+        orderable=False,
+    )
 
     class Meta(NetBoxTable.Meta):
         model = Claim
         fields = (
-            'pk', 'id', 'reservation', 'tag', 'restriction', 'description', 'start_date', 'end_date',
+            'pk', 'id', 'reservation', 'tag', 'restriction', 'description', 'start_date', 'end_date','claim',
         )
         default_columns = (
-            'id', 'reservation', 'tag', 'restriction', 'start_date', 'end_date',
+            'tag', 'reservation', 'restriction', 'claim', 'start_date', 'end_date',
         )
 
 

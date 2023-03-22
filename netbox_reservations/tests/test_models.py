@@ -21,14 +21,14 @@ class ReservationTestCase(TestCase):
         )
 
         self.reservation_name = 'Test Reservation'
-        self.reservation_comments = 'Test Comments'
+        self.reservation_description = 'Test Comments'
         self.reservation_start_date = timezone.now() + timedelta(days=1)
         self.reservation_end_date = timezone.now() + timedelta(days=2)
         self.reservation_is_draft = False
 
         self.reservation = Reservation.objects.create(
             name=self.reservation_name,
-            comments=self.reservation_comments,
+            description=self.reservation_description,
             start_date=self.reservation_start_date,
             end_date=self.reservation_end_date,
             is_draft=self.reservation_is_draft,
@@ -40,7 +40,7 @@ class ReservationTestCase(TestCase):
         self.assertTrue(isinstance(self.reservation, Reservation))
         self.assertEqual(self.reservation.__str__(), self.reservation_name)
         self.assertEqual(self.reservation.name, self.reservation_name)
-        self.assertEqual(self.reservation.comments, self.reservation_comments)
+        self.assertEqual(self.reservation.description, self.reservation_description)
         self.assertEqual(self.reservation.start_date, self.reservation_start_date)
         self.assertEqual(self.reservation.end_date, self.reservation_end_date)
         self.assertEqual(self.reservation.is_draft, self.reservation_is_draft)
@@ -70,7 +70,7 @@ class ClaimTestCase(TestCase):
     def setUp(self):
         self.reservation = Reservation.objects.create(
             name='Test Reservation',
-            comments='Test Comments',
+            description='Test Comments',
             start_date=timezone.now(),
             end_date=timezone.now() + timedelta(days=1),
             is_draft=False,
@@ -108,7 +108,7 @@ class CollisionTestCase(TestCase):
     def setUp(self):
         self.reservationA = Reservation.objects.create(
             name='Test Reservation A',
-            comments='Test Comments',
+            description='Test Comments',
             start_date=timezone.now(),
             end_date=timezone.now() + timedelta(days=2),
             is_draft=False,
@@ -122,7 +122,7 @@ class CollisionTestCase(TestCase):
         )
         self.reservationB = Reservation.objects.create(
             name='Test Reservation B',
-            comments='Test Comments',
+            description='Test Comments',
             start_date=timezone.now() + timedelta(days=1),
             end_date=timezone.now() + timedelta(days=3),
             is_draft=True,
@@ -136,7 +136,7 @@ class CollisionTestCase(TestCase):
         )
         self.reservationC = Reservation.objects.create(
             name='Test Reservation C',
-            comments='Test Comments',
+            description='Test Comments',
             start_date=timezone.now() - timedelta(days=4),
             end_date=timezone.now() + timedelta(days=4),
             is_draft=False,

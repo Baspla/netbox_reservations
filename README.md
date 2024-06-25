@@ -8,4 +8,4 @@ For detailed instructions, please refer to the [documentation](documentation.md)
 
 ## About this project
 
-This plugin was made by me during my 2022/23 work semester at Deutsche Telekom.
+This plugin was made by me during my 2022/23 work semester.
